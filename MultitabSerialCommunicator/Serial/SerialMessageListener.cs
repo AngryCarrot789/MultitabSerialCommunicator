@@ -26,6 +26,7 @@ namespace MultitabSerialCommunicator
                     {
                         addNewMessage(sport.ReadLine());
                     }
+                    catch (TimeoutException) { }
                     catch (InvalidOperationException g) { MessageBox.Show(g.Message); }
                     catch (IOException) { }
                 }

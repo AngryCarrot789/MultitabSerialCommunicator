@@ -53,6 +53,7 @@ namespace MultitabSerialCommunicator
             SVMHandShake      = "None";
             ButtonText        = "Connect";
             serialDev.SetPortValues(SVMBaudRate.ToString(), SVMDataBits, SVMStopbits, SVMParity, SVMHandShake, Encoding.ASCII, "", "\n");
+            serialDev.SetTimeouts(500, 500);
             refreshList();
         }
 

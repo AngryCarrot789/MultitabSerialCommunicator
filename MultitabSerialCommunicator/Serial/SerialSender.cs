@@ -1,6 +1,7 @@
 ﻿using MultitabSerialCommunicator.Views;
 using System;
 using System.IO.Ports;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,8 +13,16 @@ namespace MultitabSerialCommunicator
         public void SendSerialMessage(SerialPort sPort, string data)
         {
             sport = sPort;
-            sport.WriteLine(data);
-            addNewMessage(data);
+            if (sport.IsOpen)
+            {
+                Task.Run(() =>
+                {
+                    try { sport.WriteLine(data); }
+                    catch(TimeoutException) { }
+                    catch(Exception gg) { MessageBox.Show(gg.Message); }
+                });
+                addNewMessage(data);
+            }
         }
 
         public SerialSender()

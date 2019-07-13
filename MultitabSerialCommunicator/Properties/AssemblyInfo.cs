@@ -7,11 +7,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MultitabSerialCommunicator")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Multitab Serial Communicator")]
+[assembly: AssemblyDescription("A serial communicator that supports multiple tabs to communicate to multiple devices (NOT MULTIPLE TABS, read info)! Somewhat stable...")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MultitabSerialCommunicator")]
+[assembly: AssemblyCompany("TheR")]
+[assembly: AssemblyProduct("Multitab Serial Communicator")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -51,5 +51,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.4.7.65")]
+[assembly: AssemblyFileVersion("1.4.7.64")]

@@ -7,9 +7,22 @@
         xmlns:local="clr-namespace:MultitabSerialCommunicator"
          xmlns:views="clr-namespace:MultitabSerialCommunicator.Views"
          mc:Ignorable="d" Background="#252525"
-        Title="MainWindow" Height="520.5" Width="925.333">
+        Title="Multitab Serial Communicator" Height="675" Width="1200" WindowTitleBrush="#FF3C3C3C" NonActiveBorderBrush="#FF2B2B2B" NonActiveGlowBrush="#FF2B2B2B" NonActiveWindowTitleBrush="#FF323232" OverlayBrush="#FF272727" BorderBrush="#FF323232">
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
     <Grid>
-        <TabControl x:Name="main" Margin="0,27,0,0"/>
-        <Button Click="addNew" Content="+" HorizontalAlignment="Left" VerticalAlignment="Top" Width="27" Background="{x:Null}" BorderBrush="{x:Null}"/>
+        <Menu VerticalAlignment="Top">
+            <MenuItem Header="Help">
+                <MenuItem Header="Info" Command="{Binding ShowInfoCommand}"/>
+            </MenuItem>
+        </Menu>
+        <TabControl x:Name="main" Margin="0,30,0,0">
+            <TabItem>
+                <TabItem.Header>
+                    <Button Content="+" Click="addNew" BorderBrush="{x:Null}" Width="36" Height="32"/>
+                </TabItem.Header>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Controls:MetroWindow>

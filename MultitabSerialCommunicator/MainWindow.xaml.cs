@@ -26,11 +26,17 @@ namespace MultitabSerialCommunicator
         public MainWindow()
         {
             InitializeComponent();
+            addNew();
         }
 
         public int SelectedIndex { get { return main.SelectedIndex; } }
 
         private void addNew(object sender, RoutedEventArgs e)
+        {
+            addNew();
+        }
+
+        void addNew()
         {
             SerialView sview = new SerialView();
             sview.DataContext = new SerialViewModel();
@@ -40,6 +46,7 @@ namespace MultitabSerialCommunicator
             ti.Content = sview;
 
             main.Items.Add(ti);
+            main.SelectedIndex = main.Items.Count;
         }
     }
 }

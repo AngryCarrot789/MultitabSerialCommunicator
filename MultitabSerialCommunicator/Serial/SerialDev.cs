@@ -28,6 +28,12 @@ namespace MultitabSerialCommunicator
             valuesSetup = true;
         }
 
+        public void SetTimeouts(int receive, int transmit)
+        {
+            serialPort.ReadTimeout = receive;
+            serialPort.WriteTimeout = transmit;
+        }
+
         public SerialDev()
         {
             serialPort.NewLine = "\n";
