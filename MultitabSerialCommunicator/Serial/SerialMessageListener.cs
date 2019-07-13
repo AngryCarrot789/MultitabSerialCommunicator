@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,10 @@ namespace MultitabSerialCommunicator
                 {
                     try
                     {
-                        addNewMessage($"RX> {sport.ReadLine()}");
+                        addNewMessage(sport.ReadLine());
                     }
                     catch (InvalidOperationException g) { MessageBox.Show(g.Message); }
+                    catch (IOException) { }
                 }
             });
         }

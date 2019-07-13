@@ -36,7 +36,11 @@ namespace MultitabSerialCommunicator
 
         public void SetPortName(string Portname)
         {
-            if (!string.IsNullOrEmpty(Portname)) serialPort.PortName = Portname;
+            if (!string.IsNullOrEmpty(Portname)
+                && !connected)
+            {
+                serialPort.PortName = Portname;
+            }
         }
 
         public void ResetSerialHelpers()

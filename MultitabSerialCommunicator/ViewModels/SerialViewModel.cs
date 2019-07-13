@@ -1,4 +1,5 @@
 ﻿using MultitabSerialCommunicator.Serial;
+using MultitabSerialCommunicator.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,6 +26,7 @@ namespace MultitabSerialCommunicator
         private string sendText;
         private string btnText;
         private SerialDev serialDev = new SerialDev();
+        public SerialDataCollections SerialDataCollections { get; set; } = new SerialDataCollections();
         #endregion
 
         #region public fields

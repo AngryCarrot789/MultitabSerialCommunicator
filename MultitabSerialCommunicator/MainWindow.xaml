@@ -6,9 +6,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultitabSerialCommunicator"
          xmlns:views="clr-namespace:MultitabSerialCommunicator.Views"
-         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+         mc:Ignorable="d" Background="#252525"
+        Title="MainWindow" Height="520.5" Width="925.333">
     <Grid>
-        <views:SerialView/>
+        <views:SerialView Height="Auto" Width="Auto"/>
     </Grid>
 </Controls:MetroWindow>

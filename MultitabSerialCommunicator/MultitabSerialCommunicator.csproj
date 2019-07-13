@@ -69,6 +69,7 @@
     <Compile Include="Serial\SerialMessageListener.cs" />
     <Compile Include="Serial\SerialSender.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
+    <Compile Include="ViewModels\SerialDataCollections.cs" />
     <Compile Include="ViewModels\SerialViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="Views\SerialView.xaml.cs">
