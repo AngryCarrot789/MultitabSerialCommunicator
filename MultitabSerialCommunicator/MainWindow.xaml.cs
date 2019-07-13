@@ -42,11 +42,27 @@ namespace MultitabSerialCommunicator
             sview.DataContext = new SerialViewModel();
 
             TabItem ti = new TabItem();
+            ContextMenu cm = new ContextMenu();
+            MenuItem mi = new MenuItem();
+            mi.Header = "Close";
+            mi.Click += Mi_Click;
+            mi.Uid = "0";
+            cm.Items.Add(mi);
+
+            ti.ContextMenu = cm;
             ti.Header = $"Serial {main.Items.Count}";
             ti.Content = sview;
 
             main.Items.Add(ti);
-            main.SelectedIndex = main.Items.Count;
+            main.SelectedIndex = main.Items.Count - 1;
+        }
+
+        private void Mi_Click(object sender, RoutedEventArgs e)
+        {
+            switch(int.Parse(((MenuItem)e.Source).Uid))
+            {
+                case 0: main.Items.RemoveAt(main.SelectedIndex); break;
+            }
         }
     }
 }
