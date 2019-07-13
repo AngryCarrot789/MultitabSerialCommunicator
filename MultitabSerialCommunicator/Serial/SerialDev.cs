@@ -16,7 +16,7 @@ namespace MultitabSerialCommunicator
         List<Task>                     tsks         = new List<Task>();
         bool                           valuesSetup  = false;
         bool connected => serialPort.IsOpen;
-        public void SetPortValues(string baud, string dbit, string sbit, string prty, string hndk, Encoding encd, string portname, string newLine)
+        public void SetPortValues(string baud, string dbit, string sbit, string prty, string hndk, Encoding encd, string portname, string newLine, int bufferSize)
         {
             if (!string.IsNullOrEmpty(baud))     serialPort.BaudRate = int.Parse(baud);
             if (!string.IsNullOrEmpty(dbit))     serialPort.BaudRate = int.Parse(dbit);
@@ -24,6 +24,7 @@ namespace MultitabSerialCommunicator
             if (!string.IsNullOrEmpty(prty))     serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), prty);
             if (!string.IsNullOrEmpty(hndk))     serialPort.Handshake = (Handshake)Enum.Parse(typeof(Handshake), hndk);
             if (!string.IsNullOrEmpty(portname)) serialPort.PortName = portname;
+            serialPort.ReadBufferSize = bufferSize; serialPort.WriteBufferSize = bufferSize;
             serialPort.NewLine = newLine;
             valuesSetup = true;
         }
@@ -85,6 +86,26 @@ namespace MultitabSerialCommunicator
         public void SendSerialMessage(string data)
         {
             serialSender.SendSerialMessage(serialPort, data);
+        }
+
+        public void ClearBuffers()
+        {
+            if (connected)
+            {
+                serialPort.DiscardInBuffer();
+                serialPort.DiscardOutBuffer();
+            }
+        }
+
+        public void DisposeProc()
+        {
+            Task.Run(() =>
+            {
+                serialPort.Dispose();
+                listener.DisposeProc();
+                serialSender.DisposeProc();
+            });
+            Task.WhenAll(tsks);
         }
     }
 }

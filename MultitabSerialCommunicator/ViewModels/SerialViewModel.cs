@@ -19,6 +19,10 @@ namespace MultitabSerialCommunicator
         private string mainText;
         private string sendText;
         private string btnText;
+        private int readTimeout;
+        private int writeTimeout;
+        private char newLineChar;
+        private int bufferSize;
         private SerialDev serialDev = new SerialDev();
         public SerialDataCollections SerialDataCollections { get; set; } = new SerialDataCollections();
         #endregion
@@ -34,9 +38,14 @@ namespace MultitabSerialCommunicator
         public string MainText                    { get { return mainText; }  set { mainText = value;  RaisePropertyChanged(); } }
         public string SendText                    { get { return sendText; }  set { sendText = value;  RaisePropertyChanged(); } }
         public string ButtonText                  { get { return btnText; }   set { btnText = value;   RaisePropertyChanged(); } }
+        public int ReadTimeout { get { return readTimeout; } set { readTimeout = value; RaisePropertyChanged(); } }
+        public int WriteTimeout { get { return writeTimeout; } set { writeTimeout = value; RaisePropertyChanged(); } }
+        public char NewLineChar { get { return newLineChar; } set { newLineChar = value; RaisePropertyChanged(); } }
+        public int BufferSize { get { return bufferSize; } set { bufferSize = value; RaisePropertyChanged(); } }
         public ICommand ConnectToPort     { get; set; }
         public ICommand SendSerialMessage { get; set; }
         public ICommand RefreshCOMsList   { get; set; }
+        public ICommand ClearBuffers      { get; set; }
         #endregion
 
         #region Constructor
@@ -46,20 +55,37 @@ namespace MultitabSerialCommunicator
             ConnectToPort     = new DelegateCommand(connect);
             SendSerialMessage = new DelegateCommand(sendMessage);
             RefreshCOMsList   = new DelegateCommand(refreshList);
+            ClearBuffers      = new DelegateCommand(clrBuffers);
             SVMBaudRate       = 115200;
             SVMDataBits       = "8";
             SVMStopbits       = "One";
             SVMParity         = "None";
             SVMHandShake      = "None";
             ButtonText        = "Connect";
-            serialDev.SetPortValues(SVMBaudRate.ToString(), SVMDataBits, SVMStopbits, SVMParity, SVMHandShake, Encoding.ASCII, "", "\n");
-            serialDev.SetTimeouts(500, 500);
+            ReadTimeout = 500;
+            WriteTimeout = 500;
+            BufferSize = 4096;
+            serialDev.SetPortValues(SVMBaudRate.ToString(),
+                                    SVMDataBits,
+                                    SVMStopbits,
+                                    SVMParity,
+                                    SVMHandShake,
+                                    Encoding.ASCII,
+                                    "",
+                                    NewLineChar.ToString(),
+                                    BufferSize);
+            serialDev.SetTimeouts(ReadTimeout, WriteTimeout);
             refreshList();
         }
 
         #endregion
 
         #region Methods
+
+        private void clrBuffers()
+        {
+            serialDev.ClearBuffers();
+        }
 
         private void connect()
         {
@@ -82,10 +108,12 @@ namespace MultitabSerialCommunicator
             MainText += $"{RXorTX}> {data}" + '\n';
         }
 
-        #endregion
+        public void DisposeProcedure()
+        {
+            serialDev.DisposeProc();
+            serialDev = null;
+        }
 
-        #region DI
-        public static SerialViewModel serialViewModel = new SerialViewModel();
         #endregion
     }
 }

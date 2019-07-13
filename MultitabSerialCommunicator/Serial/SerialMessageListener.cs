@@ -1,10 +1,7 @@
 ﻿using MultitabSerialCommunicator.Views;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,7 +21,8 @@ namespace MultitabSerialCommunicator
                 {
                     try
                     {
-                        addNewMessage(sport.ReadLine());
+                        if (sport.BytesToRead > 0)
+                            addNewMessage(sport.ReadLine());
                     }
                     catch (TimeoutException) { }
                     catch (InvalidOperationException g) { MessageBox.Show(g.Message); }
@@ -44,9 +42,13 @@ namespace MultitabSerialCommunicator
             Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 var hwnd = (MainWindow)Application.Current.MainWindow;
-                var eek = (((hwnd.main.Items.GetItemAt(hwnd.SelectedIndex) as TabItem).Content as SerialView).DataContext as SerialViewModel);
-                eek.AddNewMessage("RX", data);
+                (((hwnd.main.Items.GetItemAt(hwnd.SelectedIndex) as TabItem).Content as SerialView).DataContext as SerialViewModel).AddNewMessage("RX", data);
             });
+        }
+
+        public void DisposeProc()
+        {
+            sport.Dispose();
         }
     }
 }

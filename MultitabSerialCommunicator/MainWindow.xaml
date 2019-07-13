@@ -5,9 +5,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultitabSerialCommunicator"
-         xmlns:views="clr-namespace:MultitabSerialCommunicator.Views"
-         mc:Ignorable="d" Background="#252525"
-        Title="Multitab Serial Communicator" Height="675" Width="1200" WindowTitleBrush="#FF3C3C3C" NonActiveBorderBrush="#FF2B2B2B" NonActiveGlowBrush="#FF2B2B2B" NonActiveWindowTitleBrush="#FF323232" OverlayBrush="#FF272727" BorderBrush="#FF323232">
+        xmlns:views="clr-namespace:MultitabSerialCommunicator.Views"
+        mc:Ignorable="d" Background="#252525"
+        Title="Multitab Serial Communicator" 
+        Height="675" Width="1200" 
+        WindowTitleBrush="#FF3C3C3C" NonActiveBorderBrush="#FF2B2B2B" 
+        NonActiveGlowBrush="#FF2B2B2B" NonActiveWindowTitleBrush="#FF323232" 
+        OverlayBrush="#FF272727" BorderBrush="#FF323232">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>

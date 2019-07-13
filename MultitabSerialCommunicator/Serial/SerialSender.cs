@@ -42,5 +42,10 @@ namespace MultitabSerialCommunicator
             var hwnd = (MainWindow)Application.Current.MainWindow;
             (((hwnd.main.Items.GetItemAt(hwnd.SelectedIndex) as TabItem).Content as SerialView).DataContext as SerialViewModel).AddNewMessage("TX", data);
         }
+
+        public void DisposeProc()
+        {
+            sport.Dispose();
+        }
     }
 }

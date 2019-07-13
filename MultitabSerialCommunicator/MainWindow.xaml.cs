@@ -1,20 +1,7 @@
 ﻿using MahApps.Metro.Controls;
 using MultitabSerialCommunicator.Views;
-using System;
-using System.Collections.Generic;
-using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace MultitabSerialCommunicator
 {
@@ -39,6 +26,7 @@ namespace MultitabSerialCommunicator
         void addNew()
         {
             SerialView sview = new SerialView();
+            sview.InitializeComponent();
             sview.DataContext = new SerialViewModel();
 
             TabItem ti = new TabItem();
@@ -61,7 +49,21 @@ namespace MultitabSerialCommunicator
         {
             switch(int.Parse(((MenuItem)e.Source).Uid))
             {
-                case 0: main.Items.RemoveAt(main.SelectedIndex); break;
+                case 0:
+                    {
+                        try
+                        {
+                            (((
+                                main.Items.                                   //All items
+                                GetItemAt(main.SelectedIndex) as TabItem).    //Gets selected tabitem
+                                Content as SerialView).                       //Casts content as SerialView
+                                DataContext as SerialViewModel).              //Casts datacontext as SerialViewModel
+                                DisposeProcedure();                           //Runs
+                        }
+                        catch { }
+                        //try { (q.DataContext as SerialViewModel).DisposeProcedure(); } catch { }
+                        main.Items.RemoveAt(main.SelectedIndex);
+                    } break;
             }
         }
     }
