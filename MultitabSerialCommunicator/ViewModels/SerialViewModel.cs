@@ -1,13 +1,7 @@
-﻿using MultitabSerialCommunicator.Serial;
-using MultitabSerialCommunicator.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using MultitabSerialCommunicator.ViewModels;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
 namespace MultitabSerialCommunicator
@@ -86,6 +80,7 @@ namespace MultitabSerialCommunicator
         {
             MainText += $"{RXorTX}> {data}" + '\n';
         }
+
         #endregion
 
         #region DI

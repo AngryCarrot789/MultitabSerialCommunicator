@@ -6,10 +6,7 @@
              xmlns:local="clr-namespace:MultitabSerialCommunicator.Views"
              xmlns:multitabserialcommunicator="clr-namespace:MultitabSerialCommunicator"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="MultitabSerialCommunicator.Views.SerialView"
-             mc:Ignorable="d" Width="656" Height="407">
-    <UserControl.DataContext>
-        <multitabserialcommunicator:SerialViewModel/>
-    </UserControl.DataContext>
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450">
     <Grid>
         <DockPanel>
             <Grid Width="259">

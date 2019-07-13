@@ -65,10 +65,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Serial\SerialDev.cs" />
-    <Compile Include="Serial\SerialFetcher.cs" />
     <Compile Include="Serial\SerialMessageListener.cs" />
     <Compile Include="Serial\SerialSender.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SerialDataCollections.cs" />
     <Compile Include="ViewModels\SerialViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />

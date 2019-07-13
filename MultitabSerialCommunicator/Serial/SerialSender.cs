@@ -1,6 +1,8 @@
-﻿using System;
+﻿using MultitabSerialCommunicator.Views;
+using System;
 using System.IO.Ports;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace MultitabSerialCommunicator
 {
@@ -14,6 +16,11 @@ namespace MultitabSerialCommunicator
             addNewMessage(data);
         }
 
+        public SerialSender()
+        {
+
+        }
+
         public void CloseSerialPort()
         {
             try { sport.Close(); } catch(Exception g) { MessageBox.Show(g.Message); }
@@ -21,7 +28,10 @@ namespace MultitabSerialCommunicator
 
         private void addNewMessage(string data)
         {
-            SerialViewModel.serialViewModel.AddNewMessage("TX", data);
+            //SerialViewModel.serialViewModel.AddNewMessage("TX", data);
+
+            var hwnd = (MainWindow)Application.Current.MainWindow;
+            (((hwnd.main.Items.GetItemAt(hwnd.SelectedIndex) as TabItem).Content as SerialView).DataContext as SerialViewModel).AddNewMessage("TX", data);
         }
     }
 }

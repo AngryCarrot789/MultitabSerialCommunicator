@@ -8,6 +8,7 @@ namespace MultitabSerialCommunicator.ViewModels
 {
     public class SerialDataCollections
     {
+        public SerialDataCollections() { }
         public List<int> BaudRates { get; set; } = new List<int>
         {
             110, 300, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 74880, 115200, 128000, 256000

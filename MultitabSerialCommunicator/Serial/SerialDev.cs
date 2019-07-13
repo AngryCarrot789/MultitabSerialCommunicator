@@ -55,7 +55,11 @@ namespace MultitabSerialCommunicator
             if (!valuesSetup) return "Err";
             if (!connected)
             {
-                serialPort.Open();
+                try
+                {
+                    serialPort.Open();
+                }
+                catch { return "Failed."; }
                 tsks.Add(listener.BeginMessageListener(serialPort));
                 return "Disconnect";
             }
@@ -68,7 +72,7 @@ namespace MultitabSerialCommunicator
 
         private void DisconnectFromArduino()
         {
-            if (connected) serialPort.Close();
+            if (connected) try { serialPort.Close(); } catch { return; }
             tsks.Add(listener.BeginMessageListener(serialPort));
         }
 
