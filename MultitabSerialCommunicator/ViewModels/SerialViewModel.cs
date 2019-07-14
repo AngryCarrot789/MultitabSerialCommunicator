@@ -21,50 +21,52 @@ namespace MultitabSerialCommunicator
         private string btnText;
         private int readTimeout;
         private int writeTimeout;
-        private char newLineChar;
         private int bufferSize;
+        private bool dtrEnable;
         private SerialDev serialDev = new SerialDev();
         public SerialDataCollections SerialDataCollections { get; set; } = new SerialDataCollections();
         #endregion
 
         #region public fields
-        public int    SVMBaudRate                 { get { return baudRate;  } set { baudRate = value;  RaisePropertyChanged(); } }
-        public string SVMPortName                 { get { return portName;  } set { portName = value; serialDev.SetPortName(value);  RaisePropertyChanged(); } }
-        public string SVMDataBits                 { get { return dataBits;  } set { dataBits = value;  RaisePropertyChanged(); } }
-        public string SVMStopbits                 { get { return stopBits;  } set { stopBits = value;  RaisePropertyChanged(); } }
-        public string SVMParity                   { get { return parity;    } set { parity = value;    RaisePropertyChanged(); } }
-        public string SVMHandShake                { get { return handShake; } set { handShake = value; RaisePropertyChanged(); } }
-        public ObservableCollection<string> Ports { get { return ports;     } set { ports = value;     RaisePropertyChanged(); } }
-        public string MainText                    { get { return mainText; }  set { mainText = value;  RaisePropertyChanged(); } }
-        public string SendText                    { get { return sendText; }  set { sendText = value;  RaisePropertyChanged(); } }
-        public string ButtonText                  { get { return btnText; }   set { btnText = value;   RaisePropertyChanged(); } }
-        public int ReadTimeout { get { return readTimeout; } set { readTimeout = value; RaisePropertyChanged(); } }
-        public int WriteTimeout { get { return writeTimeout; } set { writeTimeout = value; RaisePropertyChanged(); } }
-        public char NewLineChar { get { return newLineChar; } set { newLineChar = value; RaisePropertyChanged(); } }
-        public int BufferSize { get { return bufferSize; } set { bufferSize = value; RaisePropertyChanged(); } }
+        public int    SVMBaudRate                 { get { return baudRate;  }    set { baudRate = value;     RaisePropertyChanged(); } }
+        public string SVMPortName                 { get { return portName;  }    set { portName = value;     serialDev.SetPortName(value);  RaisePropertyChanged(); } }
+        public string SVMDataBits                 { get { return dataBits;  }    set { dataBits = value;     RaisePropertyChanged(); } }
+        public string SVMStopbits                 { get { return stopBits;  }    set { stopBits = value;     RaisePropertyChanged(); } }
+        public string SVMParity                   { get { return parity;    }    set { parity = value;       RaisePropertyChanged(); } }
+        public string SVMHandShake                { get { return handShake; }    set { handShake = value;    RaisePropertyChanged(); } }
+        public ObservableCollection<string> Ports { get { return ports;     }    set { ports = value;        RaisePropertyChanged(); } }
+        public string MainText                    { get { return mainText; }     set { mainText = value;     RaisePropertyChanged(); } }
+        public string SendText                    { get { return sendText; }     set { sendText = value;     RaisePropertyChanged(); } }
+        public string ButtonText                  { get { return btnText; }      set { btnText = value;      RaisePropertyChanged(); } }
+        public int ReadTimeout                    { get { return readTimeout; }  set { readTimeout = value;  RaisePropertyChanged(); } }
+        public int WriteTimeout                   { get { return writeTimeout; } set { writeTimeout = value; RaisePropertyChanged(); } }
+        public int BufferSize                     { get { return bufferSize; }   set { bufferSize = value;   RaisePropertyChanged(); } }
+        public bool DTREnable                     { get { return dtrEnable; }    set { dtrEnable = value;    serialDev.UpdateDTR(value); RaisePropertyChanged(); } }
         public ICommand ConnectToPort     { get; set; }
         public ICommand SendSerialMessage { get; set; }
         public ICommand RefreshCOMsList   { get; set; }
         public ICommand ClearBuffers      { get; set; }
+        public ICommand ClearText         { get; set; }
         #endregion
 
         #region Constructor
 
         public SerialViewModel()
         {
-            ConnectToPort     = new DelegateCommand(connect);
-            SendSerialMessage = new DelegateCommand(sendMessage);
-            RefreshCOMsList   = new DelegateCommand(refreshList);
-            ClearBuffers      = new DelegateCommand(clrBuffers);
-            SVMBaudRate       = 115200;
-            SVMDataBits       = "8";
-            SVMStopbits       = "One";
-            SVMParity         = "None";
-            SVMHandShake      = "None";
-            ButtonText        = "Connect";
-            ReadTimeout = 500;
-            WriteTimeout = 500;
-            BufferSize = 4096;
+            ConnectToPort         = new DelegateCommand(connect);
+            SendSerialMessage     = new DelegateCommand(sendMessage);
+            RefreshCOMsList       = new DelegateCommand(refreshList);
+            ClearBuffers          = new DelegateCommand(clrBuffers);
+            ClearText             = new DelegateCommand(clrMessageBuffer);
+            SVMBaudRate           = 115200;
+            SVMDataBits           = "8";
+            SVMStopbits           = "One";
+            SVMParity             = "None";
+            SVMHandShake          = "None";
+            ButtonText            = "Connect";
+            ReadTimeout           = 500;
+            WriteTimeout          = 500;
+            BufferSize            = 4096;
             serialDev.SetPortValues(SVMBaudRate.ToString(),
                                     SVMDataBits,
                                     SVMStopbits,
@@ -72,7 +74,6 @@ namespace MultitabSerialCommunicator
                                     SVMHandShake,
                                     Encoding.ASCII,
                                     "",
-                                    NewLineChar.ToString(),
                                     BufferSize);
             serialDev.SetTimeouts(ReadTimeout, WriteTimeout);
             refreshList();
@@ -82,6 +83,10 @@ namespace MultitabSerialCommunicator
 
         #region Methods
 
+        private void clrMessageBuffer()
+        {
+            MainText = "";
+        }
         private void clrBuffers()
         {
             serialDev.ClearBuffers();

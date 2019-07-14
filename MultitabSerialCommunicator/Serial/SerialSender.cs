@@ -17,6 +17,7 @@ namespace MultitabSerialCommunicator
             {
                 Task.Run(() =>
                 {
+                    sport.NewLine = "\n";
                     try { sport.WriteLine(data); }
                     catch(TimeoutException) { }
                     catch(Exception gg) { MessageBox.Show(gg.Message); }

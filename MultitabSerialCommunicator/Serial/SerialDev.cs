@@ -16,16 +16,16 @@ namespace MultitabSerialCommunicator
         List<Task>                     tsks         = new List<Task>();
         bool                           valuesSetup  = false;
         bool connected => serialPort.IsOpen;
-        public void SetPortValues(string baud, string dbit, string sbit, string prty, string hndk, Encoding encd, string portname, string newLine, int bufferSize)
+        public void SetPortValues(string baud, string dbit, string sbit, string prty, string hndk, Encoding encd, string portname, int bufferSize)
         {
             if (!string.IsNullOrEmpty(baud))     serialPort.BaudRate = int.Parse(baud);
-            if (!string.IsNullOrEmpty(dbit))     serialPort.BaudRate = int.Parse(dbit);
+            if (!string.IsNullOrEmpty(dbit))     serialPort.DataBits = int.Parse(dbit);
             if (!string.IsNullOrEmpty(sbit))     serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), sbit);
             if (!string.IsNullOrEmpty(prty))     serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), prty);
             if (!string.IsNullOrEmpty(hndk))     serialPort.Handshake = (Handshake)Enum.Parse(typeof(Handshake), hndk);
             if (!string.IsNullOrEmpty(portname)) serialPort.PortName = portname;
             serialPort.ReadBufferSize = bufferSize; serialPort.WriteBufferSize = bufferSize;
-            serialPort.NewLine = newLine;
+            serialPort.NewLine = "\n";
             valuesSetup = true;
         }
 
@@ -35,10 +35,16 @@ namespace MultitabSerialCommunicator
             serialPort.WriteTimeout = transmit;
         }
 
+        public void UpdateDTR(bool dtrStatus)
+        { 
+            serialPort.DtrEnable = dtrStatus;
+        }
+
         public SerialDev()
         {
             serialPort.NewLine = "\n";
             tsks.Add(listener.BeginMessageListener(serialPort));
+            serialPort.DtrEnable = true;
         }
 
         public void SetPortName(string Portname)
@@ -67,20 +73,26 @@ namespace MultitabSerialCommunicator
                     serialPort.Open();
                 }
                 catch { return "Failed."; }
+                if (serialPort.BytesToRead > 0)
+                {
+                    listener.AddSerialMessageBypass(serialPort.ReadExisting());
+                }
                 tsks.Add(listener.BeginMessageListener(serialPort));
                 return "Disconnect";
             }
             else
             {
-                Task.WhenAll(tsks);
                 DisconnectFromArduino(); return "Connect";
             }
         }
 
         private void DisconnectFromArduino()
         {
+            Task.WhenAll(tsks);
             if (connected) try { serialPort.Close(); } catch { return; }
-            tsks.Add(listener.BeginMessageListener(serialPort));
+            listener.CloseSerialPort();
+            serialSender.CloseSerialPort();
+            //tsks.Add(listener.BeginMessageListener(serialPort));
         }
 
         public void SendSerialMessage(string data)

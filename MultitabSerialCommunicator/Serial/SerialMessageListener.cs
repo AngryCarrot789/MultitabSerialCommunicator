@@ -22,7 +22,10 @@ namespace MultitabSerialCommunicator
                     try
                     {
                         if (sport.BytesToRead > 0)
-                            addNewMessage(sport.ReadLine());
+                        {
+                            sport.NewLine = "\n";
+                            addNewMessage(sport.ReadLine(), "RX");
+                        }
                     }
                     catch (TimeoutException) { }
                     catch (InvalidOperationException g) { MessageBox.Show(g.Message); }
@@ -36,14 +39,19 @@ namespace MultitabSerialCommunicator
             try { sport.Close(); } catch(Exception gg) { MessageBox.Show(gg.Message); }
         }
         //uses dependency injection
-        private void addNewMessage(string data)
+        private void addNewMessage(string data, string type)
         {
             //SerialViewModel.serialViewModel.AddNewMessage("RX", data);
             Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 var hwnd = (MainWindow)Application.Current.MainWindow;
-                (((hwnd.main.Items.GetItemAt(hwnd.SelectedIndex) as TabItem).Content as SerialView).DataContext as SerialViewModel).AddNewMessage("RX", data);
+                (((hwnd.main.Items.GetItemAt(hwnd.SelectedIndex) as TabItem).Content as SerialView).DataContext as SerialViewModel).AddNewMessage(type, data);
             });
+        }
+
+        public void AddSerialMessageBypass(string data)
+        {
+            addNewMessage(data, "Buffer");
         }
 
         public void DisposeProc()
