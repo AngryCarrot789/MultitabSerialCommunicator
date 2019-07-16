@@ -1,7 +1,9 @@
 ﻿using MultitabSerialCommunicator.ViewModels;
+using System;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Text;
+using System.Windows;
 using System.Windows.Input;
 
 namespace MultitabSerialCommunicator
@@ -23,13 +25,20 @@ namespace MultitabSerialCommunicator
         private int writeTimeout;
         private int bufferSize;
         private bool dtrEnable;
-        private SerialDev serialDev = new SerialDev();
+        private SerialDev serialDev;// = new SerialDev();
+        readonly ISerialModel iSerial;
         public SerialDataCollections SerialDataCollections { get; set; } = new SerialDataCollections();
         #endregion
 
         #region public fields
         public int    SVMBaudRate                 { get { return baudRate;  }    set { baudRate = value;     RaisePropertyChanged(); } }
         public string SVMPortName                 { get { return portName;  }    set { portName = value;     serialDev.SetPortName(value);  RaisePropertyChanged(); } }
+
+        internal void AddNewMessage(object data, object rxortx)
+        {
+            throw new NotImplementedException();
+        }
+
         public string SVMDataBits                 { get { return dataBits;  }    set { dataBits = value;     RaisePropertyChanged(); } }
         public string SVMStopbits                 { get { return stopBits;  }    set { stopBits = value;     RaisePropertyChanged(); } }
         public string SVMParity                   { get { return parity;    }    set { parity = value;       RaisePropertyChanged(); } }
@@ -51,8 +60,11 @@ namespace MultitabSerialCommunicator
 
         #region Constructor
 
-        public SerialViewModel()
+        public SerialViewModel(SerialDev serialDev)
         {
+            this.serialDev = serialDev;
+            iSerial = this.serialDev;
+            iSerial.OnMessage = message;
             ConnectToPort         = new DelegateCommand(connect);
             SendSerialMessage     = new DelegateCommand(sendMessage);
             RefreshCOMsList       = new DelegateCommand(refreshList);
@@ -67,7 +79,7 @@ namespace MultitabSerialCommunicator
             ReadTimeout           = 500;
             WriteTimeout          = 500;
             BufferSize            = 4096;
-            serialDev.SetPortValues(SVMBaudRate.ToString(),
+            this.serialDev.SetPortValues(SVMBaudRate.ToString(),
                                     SVMDataBits,
                                     SVMStopbits,
                                     SVMParity,
@@ -75,13 +87,18 @@ namespace MultitabSerialCommunicator
                                     Encoding.ASCII,
                                     "",
                                     BufferSize);
-            serialDev.SetTimeouts(ReadTimeout, WriteTimeout);
+            this.serialDev.SetTimeouts(ReadTimeout, WriteTimeout);
             refreshList();
         }
 
         #endregion
 
         #region Methods
+
+        private void message(string data, string rxortx)
+        {
+            AddNewMessage(data, rxortx);
+        }
 
         private void clrMessageBuffer()
         {
@@ -108,7 +125,7 @@ namespace MultitabSerialCommunicator
             foreach (string v in SerialPort.GetPortNames()) Ports.Add(v);
         }
 
-        public void AddNewMessage(string RXorTX, string data)
+        public void AddNewMessage(string data, string RXorTX)
         {
             MainText += $"{RXorTX}> {data}" + '\n';
         }

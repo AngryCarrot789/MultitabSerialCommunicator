@@ -8,14 +8,32 @@ using System.Windows;
 
 namespace MultitabSerialCommunicator
 {
-    public class SerialDev
+    public class SerialDev : ISerialModel
     {
         readonly SerialPort            serialPort   = new SerialPort();
         readonly SerialMessageListener listener     = new SerialMessageListener();
         readonly SerialSender          serialSender = new SerialSender();
         List<Task>                     tsks         = new List<Task>();
         bool                           valuesSetup  = false;
-        bool connected => serialPort.IsOpen;
+
+        bool _connected => serialPort.IsOpen;
+
+        public SerialDev()
+        {
+            serialPort.NewLine = "\n";
+            tsks.Add(listener.BeginMessageListener(serialPort));
+            serialPort.DtrEnable = true;
+            listener.OnMessage = newMessge;
+            serialSender.OnMessage = newMessge;
+        }
+
+        public Action<string, string> OnMessage { get; set; }
+
+        private void newMessge(string data, string txrx)
+        {
+            OnMessage?.Invoke(data, txrx);
+        }
+
         public void SetPortValues(string baud, string dbit, string sbit, string prty, string hndk, Encoding encd, string portname, int bufferSize)
         {
             if (!string.IsNullOrEmpty(baud))     serialPort.BaudRate = int.Parse(baud);
@@ -40,17 +58,10 @@ namespace MultitabSerialCommunicator
             serialPort.DtrEnable = dtrStatus;
         }
 
-        public SerialDev()
-        {
-            serialPort.NewLine = "\n";
-            tsks.Add(listener.BeginMessageListener(serialPort));
-            serialPort.DtrEnable = true;
-        }
-
         public void SetPortName(string Portname)
         {
             if (!string.IsNullOrEmpty(Portname)
-                && !connected)
+                && !_connected)
             {
                 serialPort.PortName = Portname;
             }
@@ -66,7 +77,7 @@ namespace MultitabSerialCommunicator
         public string AutoConnectToArduino()
         {
             if (!valuesSetup) return "Err";
-            if (!connected)
+            if (!_connected)
             {
                 try
                 {
@@ -89,7 +100,7 @@ namespace MultitabSerialCommunicator
         private void DisconnectFromArduino()
         {
             Task.WhenAll(tsks);
-            if (connected) try { serialPort.Close(); } catch { return; }
+            if (_connected) try { serialPort.Close(); } catch { return; }
             listener.CloseSerialPort();
             serialSender.CloseSerialPort();
             //tsks.Add(listener.BeginMessageListener(serialPort));
@@ -102,7 +113,7 @@ namespace MultitabSerialCommunicator
 
         public void ClearBuffers()
         {
-            if (connected)
+            if (_connected)
             {
                 serialPort.DiscardInBuffer();
                 serialPort.DiscardOutBuffer();

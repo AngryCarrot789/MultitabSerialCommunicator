@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace MultitabSerialCommunicator
 {
-    public class SerialMessageListener
+    public class SerialMessageListener : ISerialModel
     {
         public SerialMessageListener() { }
         private SerialPort sport = new SerialPort();
@@ -41,12 +41,7 @@ namespace MultitabSerialCommunicator
         //uses dependency injection
         private void addNewMessage(string data, string type)
         {
-            //SerialViewModel.serialViewModel.AddNewMessage("RX", data);
-            Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                var hwnd = (MainWindow)Application.Current.MainWindow;
-                (((hwnd.main.Items.GetItemAt(hwnd.SelectedIndex) as TabItem).Content as SerialView).DataContext as SerialViewModel).AddNewMessage(type, data);
-            });
+            OnMessage?.Invoke(data, type);
         }
 
         public void AddSerialMessageBypass(string data)
@@ -58,5 +53,6 @@ namespace MultitabSerialCommunicator
         {
             sport.Dispose();
         }
+        public Action<string, string> OnMessage { get; set; }
     }
 }

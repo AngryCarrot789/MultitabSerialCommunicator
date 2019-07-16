@@ -7,9 +7,12 @@ using System.Windows.Controls;
 
 namespace MultitabSerialCommunicator
 {
-    public class SerialSender
+    public class SerialSender : ISerialModel
     {
         private SerialPort sport = new SerialPort();
+
+        public Action<string, string> OnMessage { get; set; }
+
         public void SendSerialMessage(SerialPort sPort, string data)
         {
             sport = sPort;
@@ -26,11 +29,6 @@ namespace MultitabSerialCommunicator
             }
         }
 
-        public SerialSender()
-        {
-
-        }
-
         public void CloseSerialPort()
         {
             try { sport.Close(); } catch(Exception g) { MessageBox.Show(g.Message); }
@@ -38,10 +36,7 @@ namespace MultitabSerialCommunicator
 
         private void addNewMessage(string data)
         {
-            //SerialViewModel.serialViewModel.AddNewMessage("TX", data);
-
-            var hwnd = (MainWindow)Application.Current.MainWindow;
-            (((hwnd.main.Items.GetItemAt(hwnd.SelectedIndex) as TabItem).Content as SerialView).DataContext as SerialViewModel).AddNewMessage("TX", data);
+            OnMessage?.Invoke(data, "TX");
         }
 
         public void DisposeProc()

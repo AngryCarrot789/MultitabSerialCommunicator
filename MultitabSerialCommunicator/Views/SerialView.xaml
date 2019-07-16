@@ -7,9 +7,6 @@
              xmlns:multitabserialcommunicator="clr-namespace:MultitabSerialCommunicator"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="MultitabSerialCommunicator.Views.SerialView"
              mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="675">
-    <UserControl.DataContext>
-        <multitabserialcommunicator:SerialViewModel/>
-    </UserControl.DataContext>
     <Grid>
         <DockPanel>
             <Grid Width="282">
@@ -47,12 +44,13 @@
             </Grid>
             <GroupBox Header="Messages" Margin="2 0 0 0" BorderBrush="#CC363636" Background="#CC363636">
                 <Grid>
-                    <TextBox Text="{Binding SendText, UpdateSourceTrigger=PropertyChanged}" x:Name="messageText" Height="32" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="95,0,0,0" BorderBrush="#FF383838" FontSize="14" mah:ControlsHelper.FocusBorderBrush="#FF4B4B4B" mah:ControlsHelper.MouseOverBorderBrush="#FF363636"/>
+                    <TextBox Text="{Binding SendText, UpdateSourceTrigger=PropertyChanged}" x:Name="messageText" Height="32" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="95,0,0,0" BorderBrush="#FF383838" FontSize="14" mah:ControlsHelper.FocusBorderBrush="#FF4B4B4B" mah:ControlsHelper.MouseOverBorderBrush="#FF363636">
+                        <TextBox.InputBindings>
+                            <KeyBinding  Key="Enter" Command="{Binding SendSerialMessage}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
                     <Button Focusable="False" Command="{Binding SendSerialMessage}" Content="send" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="90" BorderBrush="#FF383838" Height="32"/>
                     <TextBox Text="{Binding MainText, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Margin="0,26,0,37" TextWrapping="Wrap" BorderBrush="#FF383838" mah:ControlsHelper.FocusBorderBrush="#FF3E3E3E" mah:ControlsHelper.MouseOverBorderBrush="#FF515151" FontSize="14">
-                        <TextBox.InputBindings>
-                            <KeyBinding Key="Enter" Command="{Binding SendSerialMessage}"/>
-                        </TextBox.InputBindings>
                         <TextBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Clear Text" Command="{Binding ClearText}"/>

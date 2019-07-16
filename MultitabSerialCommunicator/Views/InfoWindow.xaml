@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultitabSerialCommunicator.Views"
         mc:Ignorable="d" Background="#252525"
-        Title="u better bloody read this" Height="330" Width="512">
+        Title="u better bloody read this" Height="120.845" Width="512">
     <Grid>
-        <TextBlock Text="DO NOT CONNECT 1 TAB AND ANOTHER TO 2 DIFFERENT PORTS THAT ARE 'CONNECTED' TO EACH OTHER! AKA MEANING DONT CONNECT A PORT THAT CAN TALK TO ANOTHER PORT TO 2 SEPARATE TABS BECUASE IF YOU DO SYSTEM32 WILL EXPLODE! just do it and see what happens." TextWrapping="Wrap" Foreground="#FFE6E6E6" FontSize="24" Margin="10"/>
+        <TextBlock Text="A nifty serial communicator" TextWrapping="Wrap" Foreground="#FFE6E6E6" FontSize="24" Margin="10"/>
     </Grid>
 </Window>

@@ -27,7 +27,7 @@ namespace MultitabSerialCommunicator
         {
             SerialView sview = new SerialView();
             sview.InitializeComponent();
-            sview.DataContext = new SerialViewModel();
+            sview.DataContext = new SerialViewModel(new SerialDev());
 
             TabItem ti = new TabItem();
             ContextMenu cm = new ContextMenu();

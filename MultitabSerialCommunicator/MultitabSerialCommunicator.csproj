@@ -67,6 +67,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Serial\ISerialModel.cs" />
     <Compile Include="Serial\SerialDev.cs" />
     <Compile Include="Serial\SerialMessageListener.cs" />
     <Compile Include="Serial\SerialSender.cs" />

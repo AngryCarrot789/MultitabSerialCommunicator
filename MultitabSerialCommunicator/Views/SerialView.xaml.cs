@@ -10,7 +10,8 @@ namespace MultitabSerialCommunicator.Views
         public SerialView()
         {
             InitializeComponent();
-            //this.DataContext = SerialViewModel.serialViewModel;
+            SerialViewModel svm = new SerialViewModel(new SerialDev());
+            this.DataContext = svm;
         }
     }
 }
