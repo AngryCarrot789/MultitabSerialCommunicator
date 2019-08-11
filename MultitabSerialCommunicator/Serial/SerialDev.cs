@@ -18,10 +18,13 @@ namespace MultitabSerialCommunicator
 
         bool _connected => serialPort.IsOpen;
 
+        public string EPortname => serialPort.PortName;
+        public string EBaudrate => serialPort.BaudRate.ToString();
+        public string EDatabits => serialPort.DataBits.ToString();
+
         public SerialDev()
         {
             serialPort.NewLine = "\n";
-            tsks.Add(listener.BeginMessageListener(serialPort));
             serialPort.DtrEnable = true;
             listener.OnMessage = newMessge;
             serialSender.OnMessage = newMessge;
@@ -36,15 +39,18 @@ namespace MultitabSerialCommunicator
 
         public void SetPortValues(string baud, string dbit, string sbit, string prty, string hndk, Encoding encd, string portname, int bufferSize)
         {
-            if (!string.IsNullOrEmpty(baud))     serialPort.BaudRate = int.Parse(baud);
-            if (!string.IsNullOrEmpty(dbit))     serialPort.DataBits = int.Parse(dbit);
-            if (!string.IsNullOrEmpty(sbit))     serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), sbit);
-            if (!string.IsNullOrEmpty(prty))     serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), prty);
-            if (!string.IsNullOrEmpty(hndk))     serialPort.Handshake = (Handshake)Enum.Parse(typeof(Handshake), hndk);
-            if (!string.IsNullOrEmpty(portname)) serialPort.PortName = portname;
-            serialPort.ReadBufferSize = bufferSize; serialPort.WriteBufferSize = bufferSize;
-            serialPort.NewLine = "\n";
-            valuesSetup = true;
+            if (!_connected)
+            {
+                if (!string.IsNullOrEmpty(baud)) serialPort.BaudRate = int.Parse(baud);
+                if (!string.IsNullOrEmpty(dbit)) serialPort.DataBits = int.Parse(dbit);
+                if (!string.IsNullOrEmpty(sbit)) serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), sbit);
+                if (!string.IsNullOrEmpty(prty)) serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), prty);
+                if (!string.IsNullOrEmpty(hndk)) serialPort.Handshake = (Handshake)Enum.Parse(typeof(Handshake), hndk);
+                if (!string.IsNullOrEmpty(portname)) serialPort.PortName = portname;
+                serialPort.ReadBufferSize = bufferSize; serialPort.WriteBufferSize = bufferSize;
+                serialPort.NewLine = "\n";
+                valuesSetup = true;
+            }
         }
 
         public void SetTimeouts(int receive, int transmit)
@@ -58,21 +64,12 @@ namespace MultitabSerialCommunicator
             serialPort.DtrEnable = dtrStatus;
         }
 
-        public void SetPortName(string Portname)
-        {
-            if (!string.IsNullOrEmpty(Portname)
-                && !_connected)
-            {
-                serialPort.PortName = Portname;
-            }
-        }
-
-        public void ResetSerialHelpers()
-        {
-            Task.WhenAll(tsks);
-            listener.CloseSerialPort();
-            tsks.Add(listener.BeginMessageListener(serialPort));
-        }
+        //public void ResetSerialHelpers()
+        //{
+        //    Task.WhenAll(tsks);
+        //    listener.CloseSerialPort();
+        //    tsks.Add(listener.BeginMessageListener(serialPort));
+        //}
 
         public string AutoConnectToArduino()
         {

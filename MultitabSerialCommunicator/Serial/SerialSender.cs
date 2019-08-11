@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace MultitabSerialCommunicator
 {
-    public class SerialSender : ISerialModel
+    public class SerialSender : ISerialModel, ISerialComms
     {
         private SerialPort sport = new SerialPort();
 
@@ -36,12 +36,17 @@ namespace MultitabSerialCommunicator
 
         private void addNewMessage(string data)
         {
-            OnMessage?.Invoke(data, "TX");
+            NewMessage(data, "TX");
         }
 
         public void DisposeProc()
         {
             sport.Dispose();
+        }
+
+        public void NewMessage(string data, string RX_or_TX)
+        {
+            OnMessage?.Invoke(data, RX_or_TX);
         }
     }
 }

@@ -6,27 +6,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultitabSerialCommunicator"
         xmlns:views="clr-namespace:MultitabSerialCommunicator.Views"
-        mc:Ignorable="d" Background="#252525"
+        xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+                      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+                      mc:Ignorable="d"
         Title="Multitab Serial Communicator" 
-        Height="675" Width="1200" 
-        WindowTitleBrush="#FF3C3C3C" NonActiveBorderBrush="#FF2B2B2B" 
-        NonActiveGlowBrush="#FF2B2B2B" NonActiveWindowTitleBrush="#FF323232" 
-        OverlayBrush="#FF272727" BorderBrush="#FF323232">
+        Height="675" Width="1200"
+        Background="#252525"
+        WindowTitleBrush="#FF3C3C3C" 
+        NonActiveBorderBrush="#FF2B2B2B" 
+        NonActiveGlowBrush="#FF2B2B2B" 
+        NonActiveWindowTitleBrush="#FF323232" 
+        OverlayBrush="#FF272727" 
+        BorderBrush="#FF323232">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
-    <Grid>
-        <Menu VerticalAlignment="Top">
-            <MenuItem Header="Help">
-                <MenuItem Header="Info" Command="{Binding ShowInfoCommand}"/>
-            </MenuItem>
-        </Menu>
-        <TabControl x:Name="main" Margin="0,30,0,0">
-            <TabItem>
-                <TabItem.Header>
-                    <Button Content="+" Click="addNew" BorderBrush="{x:Null}" Width="36" Height="32"/>
-                </TabItem.Header>
-            </TabItem>
-        </TabControl>
-    </Grid>
+    <DockPanel>
+        <StackPanel>
+            <Button Command="{Binding NewTabCommand}" 
+                    Background="{x:Null}" BorderBrush="{x:Null}" 
+                    Margin="1" ToolTip="New File" 
+                    Focusable="False" 
+                    Style="{StaticResource MaterialDesignRaisedDarkButton}" Height="60" Width="60">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30"/>
+                    <TextBlock Text="Add"/>
+                </StackPanel>
+            </Button>
+            <Button Content="Info" Command="{Binding ShowInfoCommand}" Background="{x:Null}" BorderBrush="{x:Null}"/>
+        </StackPanel>
+        <dragablz:TabablzControl 
+            ItemsSource="{Binding Tabs, UpdateSourceTrigger=PropertyChanged}" 
+            SelectedIndex="{Binding SelectedIndex,UpdateSourceTrigger=PropertyChanged}" Background="#FF1B1B1B" BorderBrush="{x:Null}">
+            <dragablz:TabablzControl.InterTabController>
+                <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
+            </dragablz:TabablzControl.InterTabController>
+        </dragablz:TabablzControl>
+    </DockPanel>
 </Controls:MetroWindow>

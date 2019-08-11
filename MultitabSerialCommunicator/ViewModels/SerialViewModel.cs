@@ -1,9 +1,11 @@
 ﻿using MultitabSerialCommunicator.ViewModels;
+using MultitabSerialCommunicator.Views;
 using System;
 using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace MultitabSerialCommunicator
@@ -23,26 +25,22 @@ namespace MultitabSerialCommunicator
         private string btnText;
         private int readTimeout;
         private int writeTimeout;
-        private int bufferSize;
+        private int bufferSize = 4096;
         private bool dtrEnable;
-        private SerialDev serialDev;// = new SerialDev();
+        private bool autoScroll;
+        private SerialDev serialDev = new SerialDev();
         readonly ISerialModel iSerial;
         public SerialDataCollections SerialDataCollections { get; set; } = new SerialDataCollections();
         #endregion
 
         #region public fields
-        public int    SVMBaudRate                 { get { return baudRate;  }    set { baudRate = value;     RaisePropertyChanged(); } }
-        public string SVMPortName                 { get { return portName;  }    set { portName = value;     serialDev.SetPortName(value);  RaisePropertyChanged(); } }
-
-        internal void AddNewMessage(object data, object rxortx)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string SVMDataBits                 { get { return dataBits;  }    set { dataBits = value;     RaisePropertyChanged(); } }
-        public string SVMStopbits                 { get { return stopBits;  }    set { stopBits = value;     RaisePropertyChanged(); } }
-        public string SVMParity                   { get { return parity;    }    set { parity = value;       RaisePropertyChanged(); } }
-        public string SVMHandShake                { get { return handShake; }    set { handShake = value;    RaisePropertyChanged(); } }
+        public Action<bool> SetAutoscroll { get; set; }
+        public int    SVMBaudRate                 { get { return baudRate;  }    set { baudRate = value;     refreshVariables(); RaisePropertyChanged(); } }
+        public string SVMPortName                 { get { return portName;  }    set { portName = value;     refreshVariables(); RaisePropertyChanged(); } }
+        public string SVMDataBits                 { get { return dataBits;  }    set { dataBits = value;     refreshVariables(); RaisePropertyChanged(); } }
+        public string SVMStopbits                 { get { return stopBits;  }    set { stopBits = value;     refreshVariables(); RaisePropertyChanged(); } }
+        public string SVMParity                   { get { return parity;    }    set { parity = value;       refreshVariables(); RaisePropertyChanged(); } }
+        public string SVMHandShake                { get { return handShake; }    set { handShake = value;    refreshVariables(); RaisePropertyChanged(); } }
         public ObservableCollection<string> Ports { get { return ports;     }    set { ports = value;        RaisePropertyChanged(); } }
         public string MainText                    { get { return mainText; }     set { mainText = value;     RaisePropertyChanged(); } }
         public string SendText                    { get { return sendText; }     set { sendText = value;     RaisePropertyChanged(); } }
@@ -50,7 +48,8 @@ namespace MultitabSerialCommunicator
         public int ReadTimeout                    { get { return readTimeout; }  set { readTimeout = value;  RaisePropertyChanged(); } }
         public int WriteTimeout                   { get { return writeTimeout; } set { writeTimeout = value; RaisePropertyChanged(); } }
         public int BufferSize                     { get { return bufferSize; }   set { bufferSize = value;   RaisePropertyChanged(); } }
-        public bool DTREnable                     { get { return dtrEnable; }    set { dtrEnable = value;    serialDev.UpdateDTR(value); RaisePropertyChanged(); } }
+        public bool DTREnable                     { get { return dtrEnable; }    set { dtrEnable = value;    serialDev.UpdateDTR(value);    RaisePropertyChanged(); } }
+        public bool AutoScroll                    { get { return autoScroll; }   set { autoScroll = value;   SetAutoscroll?.Invoke(value);  RaisePropertyChanged(); } }
         public ICommand ConnectToPort     { get; set; }
         public ICommand SendSerialMessage { get; set; }
         public ICommand RefreshCOMsList   { get; set; }
@@ -60,11 +59,11 @@ namespace MultitabSerialCommunicator
 
         #region Constructor
 
-        public SerialViewModel(SerialDev serialDev)
+        public SerialViewModel(SerialView uC)
         {
-            this.serialDev = serialDev;
             iSerial = this.serialDev;
             iSerial.OnMessage = message;
+            AutoScroll = true;
             ConnectToPort         = new DelegateCommand(connect);
             SendSerialMessage     = new DelegateCommand(sendMessage);
             RefreshCOMsList       = new DelegateCommand(refreshList);
@@ -79,21 +78,27 @@ namespace MultitabSerialCommunicator
             ReadTimeout           = 500;
             WriteTimeout          = 500;
             BufferSize            = 4096;
-            this.serialDev.SetPortValues(SVMBaudRate.ToString(),
-                                    SVMDataBits,
-                                    SVMStopbits,
-                                    SVMParity,
-                                    SVMHandShake,
-                                    Encoding.ASCII,
-                                    "",
-                                    BufferSize);
+
             this.serialDev.SetTimeouts(ReadTimeout, WriteTimeout);
             refreshList();
+            refreshVariables();
         }
 
         #endregion
 
         #region Methods
+
+        private void refreshVariables()
+        {
+            this.serialDev.SetPortValues(SVMBaudRate.ToString(),
+                                         SVMDataBits,
+                                         SVMStopbits,
+                                         SVMParity,
+                                         SVMHandShake,
+                                         Encoding.ASCII,
+                                         SVMPortName,
+                                         BufferSize);
+        }
 
         private void message(string data, string rxortx)
         {
@@ -111,7 +116,12 @@ namespace MultitabSerialCommunicator
 
         private void connect()
         {
-            ButtonText = serialDev.AutoConnectToArduino();
+            string status = serialDev.AutoConnectToArduino();
+            ButtonText = status;
+            if (status == "Disconnect")
+            {
+                startupMessage(serialDev.EPortname, serialDev.EBaudrate, serialDev.EDatabits);
+            }
         }
 
         private void sendMessage()
@@ -128,6 +138,11 @@ namespace MultitabSerialCommunicator
         public void AddNewMessage(string data, string RXorTX)
         {
             MainText += $"{RXorTX}> {data}" + '\n';
+        }
+
+        private void startupMessage(string portname, string baudrate, string databits)
+        {
+            MainText += $"Port: {portname}{Environment.NewLine}Baudrate: {baudrate}{Environment.NewLine}DataBits: {databits}{Environment.NewLine}";
         }
 
         public void DisposeProcedure()
