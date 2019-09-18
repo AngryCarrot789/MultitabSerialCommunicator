@@ -7,45 +7,39 @@ using System.Windows.Controls;
 
 namespace MultitabSerialCommunicator
 {
-    public class SerialSender : ISerialModel, ISerialComms
+    public class SerialSender
     {
         private SerialPort sport = new SerialPort();
 
         public Action<string, string> OnMessage { get; set; }
 
-        public void SendSerialMessage(SerialPort sPort, string data)
-        {
+        public void SendSerialMessage(SerialPort sPort, string data) {
             sport = sPort;
-            if (sport.IsOpen)
-            {
-                Task.Run(() =>
-                {
+            if (sport.IsOpen) {
+                Task.Run(() => {
                     sport.NewLine = "\n";
                     try { sport.WriteLine(data); }
-                    catch(TimeoutException) { }
-                    catch(Exception gg) { MessageBox.Show(gg.Message); }
+                    catch (TimeoutException) { }
+                    catch (Exception gg) { MessageBox.Show(gg.Message); }
                 });
                 addNewMessage(data);
             }
         }
 
-        public void CloseSerialPort()
-        {
-            try { sport.Close(); } catch(Exception g) { MessageBox.Show(g.Message); }
+        public void CloseSerialPort() {
+            try { sport.Close(); }
+            catch (Exception g) { MessageBox.Show(g.Message); }
         }
 
-        private void addNewMessage(string data)
-        {
+        private void addNewMessage(string data) {
             NewMessage(data, "TX");
         }
 
-        public void DisposeProc()
-        {
+        public void DisposeProc() {
             sport.Dispose();
         }
 
-        public void NewMessage(string data, string RX_or_TX)
-        {
+        public void NewMessage(string data, string RX_or_TX) {
             OnMessage?.Invoke(data, RX_or_TX);
         }
     }

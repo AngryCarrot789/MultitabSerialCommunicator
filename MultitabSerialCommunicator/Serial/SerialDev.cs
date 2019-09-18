@@ -8,13 +8,13 @@ using System.Windows;
 
 namespace MultitabSerialCommunicator
 {
-    public class SerialDev : ISerialModel
+    public class SerialDev
     {
-        readonly SerialPort            serialPort   = new SerialPort();
-        readonly SerialMessageListener listener     = new SerialMessageListener();
-        readonly SerialSender          serialSender = new SerialSender();
-        List<Task>                     tsks         = new List<Task>();
-        bool                           valuesSetup  = false;
+        readonly SerialPort serialPort = new SerialPort();
+        readonly SerialMessageListener listener = new SerialMessageListener();
+        readonly SerialSender serialSender = new SerialSender();
+        List<Task> tsks = new List<Task>();
+        bool valuesSetup = false;
 
         bool _connected => serialPort.IsOpen;
 
@@ -31,26 +31,37 @@ namespace MultitabSerialCommunicator
         }
 
         public Action<string, string> OnMessage { get; set; }
+        public Action<string> MessageCallback { get; set; }
 
         private void newMessge(string data, string txrx)
         {
             OnMessage?.Invoke(data, txrx);
         }
 
-        public void SetPortValues(string baud, string dbit, string sbit, string prty, string hndk, Encoding encd, string portname, int bufferSize)
+        public void SetPortValues(string baud, string dbit, string sbit, string prty, string hndk, string portname, int bufferSize)
         {
-            if (!_connected)
-            {
-                if (!string.IsNullOrEmpty(baud)) serialPort.BaudRate = int.Parse(baud);
-                if (!string.IsNullOrEmpty(dbit)) serialPort.DataBits = int.Parse(dbit);
-                if (!string.IsNullOrEmpty(sbit)) serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), sbit);
-                if (!string.IsNullOrEmpty(prty)) serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), prty);
-                if (!string.IsNullOrEmpty(hndk)) serialPort.Handshake = (Handshake)Enum.Parse(typeof(Handshake), hndk);
-                if (!string.IsNullOrEmpty(portname)) serialPort.PortName = portname;
-                serialPort.ReadBufferSize = bufferSize; serialPort.WriteBufferSize = bufferSize;
-                serialPort.NewLine = "\n";
-                valuesSetup = true;
+            //return if conencted.
+            if (_connected) {
+                CallbackMSG("Connected to a port. Cannon change values.");
+                return;
             }
+
+            if (!string.IsNullOrEmpty(baud))
+                serialPort.BaudRate = int.Parse(baud);
+            if (!string.IsNullOrEmpty(dbit))
+                serialPort.DataBits = int.Parse(dbit);
+            if (!string.IsNullOrEmpty(sbit))
+                serialPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), sbit);
+            if (!string.IsNullOrEmpty(prty))
+                serialPort.Parity = (Parity)Enum.Parse(typeof(Parity), prty);
+            if (!string.IsNullOrEmpty(hndk))
+                serialPort.Handshake = (Handshake)Enum.Parse(typeof(Handshake), hndk);
+            if (!string.IsNullOrEmpty(portname))
+                serialPort.PortName = portname;
+            serialPort.ReadBufferSize = bufferSize;
+            serialPort.WriteBufferSize = bufferSize;
+            serialPort.NewLine = "\n";
+            valuesSetup = true;
         }
 
         public void SetTimeouts(int receive, int transmit)
@@ -60,7 +71,7 @@ namespace MultitabSerialCommunicator
         }
 
         public void UpdateDTR(bool dtrStatus)
-        { 
+        {
             serialPort.DtrEnable = dtrStatus;
         }
 
@@ -71,33 +82,39 @@ namespace MultitabSerialCommunicator
         //    tsks.Add(listener.BeginMessageListener(serialPort));
         //}
 
-        public string AutoConnectToArduino()
+        private void CallbackMSG(string msg) => MessageCallback?.Invoke(msg);
+
+        public string AutoConnect()
         {
-            if (!valuesSetup) return "Err";
-            if (!_connected)
-            {
-                try
-                {
+            if (!valuesSetup) {
+                CallbackMSG("Values not Setup. Internal Error");
+                return "Err";
+            }
+            if (!_connected) {
+                CallbackMSG("Connecting...");
+                try {
                     serialPort.Open();
+                    CallbackMSG("Connected.");
                 }
-                catch { return "Failed."; }
-                if (serialPort.BytesToRead > 0)
-                {
+                catch (Exception e) { CallbackMSG(e.Message); return "Failed."; }
+                if (serialPort.BytesToRead > 0) {
                     listener.AddSerialMessageBypass(serialPort.ReadExisting());
                 }
                 tsks.Add(listener.BeginMessageListener(serialPort));
                 return "Disconnect";
             }
-            else
-            {
-                DisconnectFromArduino(); return "Connect";
+            else {
+                Disconnect();
+                return "Connect";
             }
         }
 
-        private void DisconnectFromArduino()
+        private void Disconnect()
         {
             Task.WhenAll(tsks);
-            if (_connected) try { serialPort.Close(); } catch { return; }
+            if (_connected)
+                try { serialPort.Close(); CallbackMSG("Disconnected"); }
+                catch (Exception e) { CallbackMSG(e.Message); return; }
             listener.CloseSerialPort();
             serialSender.CloseSerialPort();
             //tsks.Add(listener.BeginMessageListener(serialPort));
@@ -110,8 +127,7 @@ namespace MultitabSerialCommunicator
 
         public void ClearBuffers()
         {
-            if (_connected)
-            {
+            if (_connected) {
                 serialPort.DiscardInBuffer();
                 serialPort.DiscardOutBuffer();
             }
@@ -119,8 +135,7 @@ namespace MultitabSerialCommunicator
 
         public void DisposeProc()
         {
-            Task.Run(() =>
-            {
+            Task.Run(() => {
                 serialPort.Dispose();
                 listener.DisposeProc();
                 serialSender.DisposeProc();

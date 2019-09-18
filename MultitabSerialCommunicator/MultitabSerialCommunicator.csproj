@@ -77,8 +77,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Serial\ISerialComms.cs" />
-    <Compile Include="Serial\ISerialModel.cs" />
+    <Compile Include="Resources\ConfigTypes.cs" />
     <Compile Include="Serial\SerialDev.cs" />
     <Compile Include="Serial\SerialMessageListener.cs" />
     <Compile Include="Serial\SerialSender.cs" />
@@ -87,8 +86,8 @@
     <Compile Include="ViewModels\SerialDataCollections.cs" />
     <Compile Include="ViewModels\SerialViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
-    <Compile Include="Views\InfoWindow.xaml.cs">
-      <DependentUpon>InfoWindow.xaml</DependentUpon>
+    <Compile Include="Views\Configuration.xaml.cs">
+      <DependentUpon>Configuration.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ISerialView.cs" />
     <Compile Include="Views\SerialView.xaml.cs">
@@ -106,7 +105,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\InfoWindow.xaml">
+    <Page Include="Views\Configuration.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -147,6 +146,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="serial-tasks-128.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utilities\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

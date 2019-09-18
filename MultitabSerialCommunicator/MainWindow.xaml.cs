@@ -1,5 +1,6 @@
 ﻿using MahApps.Metro.Controls;
 using MultitabSerialCommunicator.Views;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,8 +11,7 @@ namespace MultitabSerialCommunicator
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        public MainWindow()
-        {
+        public MainWindow() {
             InitializeComponent();
         }
     }

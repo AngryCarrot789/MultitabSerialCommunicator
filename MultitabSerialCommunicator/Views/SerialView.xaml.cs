@@ -9,10 +9,9 @@ namespace MultitabSerialCommunicator.Views
     /// </summary>
     public partial class SerialView : UserControl
     {
-        public SerialView()
-        {
+        public SerialView() {
             InitializeComponent();
-            SerialViewModel svm = new SerialViewModel(this);
+            SerialViewModel svm = new SerialViewModel();
             this.DataContext = svm;
 
             svm.SetAutoscroll = setAutoScroll;
@@ -22,9 +21,10 @@ namespace MultitabSerialCommunicator.Views
 
         bool autoscrollEnabled = true;
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if(autoscrollEnabled) ((TextBox)e.Source).ScrollToEnd();
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e) {
+            if (autoscrollEnabled)
+                ((TextBox)e.Source).ScrollToEnd();
+
         }
     }
 }

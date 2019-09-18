@@ -10,8 +10,7 @@ namespace MultitabSerialCommunicator
     public abstract class BaseViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName]string property = null)
-        {
+        public void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName]string property = null) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
     }

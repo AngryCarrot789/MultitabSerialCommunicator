@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MultitabSerialCommunicator
+namespace MultitabSerialCommunicator.Resources
 {
-    public interface ISerialComms
+    public enum ConfigTypes
     {
-        void NewMessage(string data, string RX_or_TX);
+        MaxMessagesReceivable
     }
 }
