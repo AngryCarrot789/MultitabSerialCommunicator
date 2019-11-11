@@ -1,5 +1,4 @@
-﻿<mah:MetroWindow x:Class="MultitabSerialCommunicator.Views.Configuration"
-        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+﻿<Window x:Class="MultitabSerialCommunicator.Views.Configuration"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,18 +6,14 @@
         xmlns:local="clr-namespace:MultitabSerialCommunicator.Views"
         Closing="Window_Closing"
         mc:Ignorable="d"
-        Title="Configuration" Height="117" Width="300" Background="#FF252525">
+        Title="Configuration" Height="129.667" Width="300" Background="#FF252525">
     <Grid Margin="5">
         <Label HorizontalAlignment="Left" VerticalAlignment="Top" Content="Max Number of Receivable Messages" FontSize="16"/>
-        <Slider x:Name="tfwyoucantbebotheredtobindandjustusebehindcode" 
-                HorizontalAlignment="Left" 
-                VerticalAlignment="Top" 
-                Margin="0,31,0,0" Foreground="#FF323232" 
+        <Slider x:Name="tfwyoucantbebotheredtobindandjustusebehindcode" Foreground="#FF323232" 
                 ValueChanged="Tfwyoucantbebotheredtobindandjustusebehindcode_ValueChanged" 
-                Width="273" 
                 SmallChange="1" Value="200" 
                 Maximum="3000" 
                 Minimum="1"
-                AutoToolTipPlacement="TopLeft"/>
+                AutoToolTipPlacement="TopLeft" Height="45" VerticalAlignment="Bottom"/>
     </Grid>
-</mah:MetroWindow>
+</Window>

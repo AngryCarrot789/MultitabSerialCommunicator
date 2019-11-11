@@ -1,5 +1,4 @@
-﻿using MahApps.Metro.Controls;
-using MultitabSerialCommunicator.Resources;
+﻿using MultitabSerialCommunicator.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +18,7 @@ namespace MultitabSerialCommunicator.Views
     /// <summary>
     /// Interaction logic for Configuration.xaml
     /// </summary>
-    public partial class Configuration : MetroWindow
+    public partial class Configuration : Window
     {
         public Configuration() {
             InitializeComponent();

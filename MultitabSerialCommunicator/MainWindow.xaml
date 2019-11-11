@@ -1,5 +1,4 @@
-﻿<Controls:MetroWindow x:Class="MultitabSerialCommunicator.MainWindow"
-        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+﻿<Window x:Class="MultitabSerialCommunicator.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,10 +11,6 @@
         Title="Multitab Serial Communicator" 
         Height="675" Width="1200"
         Background="#FF1B1B1B"
-        WindowTitleBrush="#FF171717" 
-        NonActiveBorderBrush="#FF1B1B1B" 
-        NonActiveWindowTitleBrush="#FF1B1B1B" 
-        OverlayBrush="#FF272727" 
         BorderBrush="#FF171717">
     <Window.DataContext>
         <local:MainViewModel/>
@@ -26,27 +21,15 @@
             SelectedIndex="{Binding SelectedIndex,UpdateSourceTrigger=PropertyChanged}" 
             Background="#FF1B1B1B" BorderBrush="{x:Null}"
             ShowDefaultCloseButton="True" 
-            Margin="0,40,0,0">
+            Margin="0,24,0,0">
             <dragablz:TabablzControl.InterTabController>
                 <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
             </dragablz:TabablzControl.InterTabController>
 
         </dragablz:TabablzControl>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Height="40">
-            <Button Command="{Binding NewTabCommand}" 
-                    Background="{x:Null}" BorderBrush="{x:Null}" 
-                    Margin="1,1,1,0" ToolTip="New File" 
-                    Focusable="False" 
-                    Style="{StaticResource MaterialDesignRaisedDarkButton}" 
-                    Height="Auto" Width="50">
-                <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Center" Width="30" Height="30"/>
-            </Button>
-            <Button Content="Config Window" Command="{Binding OpenConfigWindowCommand}" 
-                    Background="{x:Null}" BorderBrush="{x:Null}" 
-                    Margin="1,1,1,0" ToolTip="New File" 
-                    Focusable="False" 
-                    Style="{StaticResource MaterialDesignRaisedDarkButton}" 
-                    Height="Auto"/>
-        </StackPanel>
+        <Menu VerticalAlignment="Top" Height="24">
+            <MenuItem Header="New Tab" Command="{Binding NewTabCommand}" Height="24" />
+            <MenuItem Header="Config Window" Command="{Binding OpenConfigWindowCommand}" Height="24"/>
+        </Menu>
     </Grid>
-</Controls:MetroWindow>
+</Window>
