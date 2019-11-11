@@ -79,7 +79,6 @@
     </ApplicationDefinition>
     <Compile Include="Resources\ConfigTypes.cs" />
     <Compile Include="Serial\SerialDev.cs" />
-    <Compile Include="Serial\SerialMessageListener.cs" />
     <Compile Include="Serial\SerialSender.cs" />
     <Compile Include="ViewModels\DelegateCommand.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -89,7 +88,6 @@
     <Compile Include="Views\Configuration.xaml.cs">
       <DependentUpon>Configuration.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ISerialView.cs" />
     <Compile Include="Views\SerialView.xaml.cs">
       <DependentUpon>SerialView.xaml</DependentUpon>
     </Compile>

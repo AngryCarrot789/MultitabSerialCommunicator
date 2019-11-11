@@ -11,9 +11,7 @@ namespace MultitabSerialCommunicator
     public class SerialDev
     {
         readonly SerialPort serialPort = new SerialPort();
-        readonly SerialMessageListener listener = new SerialMessageListener();
         readonly SerialSender serialSender = new SerialSender();
-        List<Task> tsks = new List<Task>();
         bool valuesSetup = false;
 
         bool _connected => serialPort.IsOpen;
@@ -26,8 +24,18 @@ namespace MultitabSerialCommunicator
         {
             serialPort.NewLine = "\n";
             serialPort.DtrEnable = true;
-            listener.OnMessage = newMessge;
+            serialPort.DataReceived += SerialPort_DataReceived;
             serialSender.OnMessage = newMessge;
+        }
+
+        private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        {
+            try
+            {
+                newMessge(serialPort.ReadLine(), "RX");
+            }
+            catch(TimeoutException) { }
+            catch(Exception ed) { newMessge(ed.Message, "Exception"); } 
         }
 
         public Action<string, string> OnMessage { get; set; }
@@ -98,9 +106,9 @@ namespace MultitabSerialCommunicator
                 }
                 catch (Exception e) { CallbackMSG(e.Message); return "Failed."; }
                 if (serialPort.BytesToRead > 0) {
-                    listener.AddSerialMessageBypass(serialPort.ReadExisting());
+                    newMessge(serialPort.ReadExisting(), "Buffer");
                 }
-                tsks.Add(listener.BeginMessageListener(serialPort));
+                serialPort.DataReceived += SerialPort_DataReceived;
                 return "Disconnect";
             }
             else {
@@ -111,11 +119,9 @@ namespace MultitabSerialCommunicator
 
         private void Disconnect()
         {
-            Task.WhenAll(tsks);
             if (_connected)
                 try { serialPort.Close(); CallbackMSG("Disconnected"); }
                 catch (Exception e) { CallbackMSG(e.Message); return; }
-            listener.CloseSerialPort();
             serialSender.CloseSerialPort();
             //tsks.Add(listener.BeginMessageListener(serialPort));
         }
@@ -137,10 +143,8 @@ namespace MultitabSerialCommunicator
         {
             Task.Run(() => {
                 serialPort.Dispose();
-                listener.DisposeProc();
                 serialSender.DisposeProc();
             });
-            Task.WhenAll(tsks);
         }
     }
 }
