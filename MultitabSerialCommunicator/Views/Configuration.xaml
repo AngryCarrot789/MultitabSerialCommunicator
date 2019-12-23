@@ -5,15 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultitabSerialCommunicator.Views"
         Closing="Window_Closing"
-        mc:Ignorable="d"
-        Title="Configuration" Height="129.667" Width="300" Background="#FF252525">
-    <Grid Margin="5">
+        mc:Ignorable="d" KeyDown="Window_KeyDown"
+        Title="Configuration" Height="195.25" Width="323" Background="#FF252525">
+    <Grid Margin="10">
         <Label HorizontalAlignment="Left" VerticalAlignment="Top" Content="Max Number of Receivable Messages" FontSize="16"/>
         <Slider x:Name="tfwyoucantbebotheredtobindandjustusebehindcode" Foreground="#FF323232" 
                 ValueChanged="Tfwyoucantbebotheredtobindandjustusebehindcode_ValueChanged" 
                 SmallChange="1" Value="200" 
                 Maximum="3000" 
                 Minimum="1"
-                AutoToolTipPlacement="TopLeft" Height="45" VerticalAlignment="Bottom"/>
+                AutoToolTipPlacement="TopLeft" Margin="0,31,0,0" Height="26" VerticalAlignment="Top"/>
+        <TextBlock FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,67,0,0" Text="Close Selected Tab:"/>
+        <TextBlock FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,88,0,0" Text="New Tab"/>
+        <TextBlock FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,109,0,0" Text="Open Config Wnd"/>
+        <TextBlock FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="147,67,0,0" Text="Esc or Del key"/>
+        <TextBlock FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="147,88,0,0" Text="Ctrl + N"/>
+        <TextBlock FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="147,109,0,0" Text="Ctrl + Enter"/>
     </Grid>
 </Window>

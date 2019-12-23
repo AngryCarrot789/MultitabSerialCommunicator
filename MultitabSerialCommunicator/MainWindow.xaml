@@ -7,29 +7,27 @@
         xmlns:views="clr-namespace:MultitabSerialCommunicator.Views"
         xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        mc:Ignorable="d"
-        Title="Multitab Serial Communicator" 
-        Height="675" Width="1200"
-        Background="#FF1B1B1B"
-        BorderBrush="#FF171717">
+        mc:Ignorable="d" KeyDown="Window_PreviewKeyDown" KeyUp="Window_PreviewKeyUp"
+        Title="Multitab Serial Communicator"
+        Height="720" Width="1280" Background="{DynamicResource BackgroundColour}">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
     <Grid>
-        <dragablz:TabablzControl 
+        <TabControl
             ItemsSource="{Binding Tabs, UpdateSourceTrigger=PropertyChanged}" 
-            SelectedIndex="{Binding SelectedIndex,UpdateSourceTrigger=PropertyChanged}" 
-            Background="#FF1B1B1B" BorderBrush="{x:Null}"
-            ShowDefaultCloseButton="True" 
-            Margin="0,24,0,0">
-            <dragablz:TabablzControl.InterTabController>
-                <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" />
-            </dragablz:TabablzControl.InterTabController>
-
-        </dragablz:TabablzControl>
-        <Menu VerticalAlignment="Top" Height="24">
-            <MenuItem Header="New Tab" Command="{Binding NewTabCommand}" Height="24" />
-            <MenuItem Header="Config Window" Command="{Binding OpenConfigWindowCommand}" Height="24"/>
+            SelectedIndex="{Binding SelectedIndex,UpdateSourceTrigger=PropertyChanged}"
+            Margin="0,24,0,0" Background="{DynamicResource ControlDefaultBackground}" BorderBrush="{DynamicResource ControlDefaultBackground}"/>
+        <Menu VerticalAlignment="Top" Background="{DynamicResource BackgroundColour}">
+            <MenuItem Header="File Streams">
+                <MenuItem Template="{DynamicResource FinalSubMenuItemTemplate}" Command="{Binding WriteToFileCommand}" Header="Write all to File (WIP)"/>
+                <MenuItem Template="{DynamicResource FinalSubMenuItemTemplate}" Command="{Binding ReadFromFileCommand}" Header="Read from File (WIP)"/>
+                <Separator/>
+                <MenuItem Template="{DynamicResource FinalSubMenuItemTemplate}" Command="{Binding BeginWriteStreamCommand}" Header="{Binding WriteStreamText, UpdateSourceTrigger=PropertyChanged}"/>
+            </MenuItem>
+            <MenuItem Header="Configuration" Height="24">
+                <MenuItem Header="Configuration Window" InputGestureText="Ctrl+Enter" Command="{Binding OpenConfigWindowCommand}" Template="{DynamicResource FinalSubMenuItemTemplate}"/>
+            </MenuItem>
         </Menu>
     </Grid>
 </Window>

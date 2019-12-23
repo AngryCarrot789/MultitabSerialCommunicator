@@ -1,12 +1,15 @@
 ﻿using MultitabSerialCommunicator.ViewModels;
 using MultitabSerialCommunicator.Views;
+using Ookii.Dialogs.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.IO.Ports;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace MultitabSerialCommunicator
@@ -14,6 +17,7 @@ namespace MultitabSerialCommunicator
     public class SerialViewModel : BaseViewModel
     {
         #region Private fields
+        private bool fileStreamOpen;
         private int baudRate;
         private string portName;
         private string dataBits;
@@ -35,6 +39,7 @@ namespace MultitabSerialCommunicator
         #endregion
 
         #region public fields
+        public bool WritingStreamOpen { get => fileStreamOpen; set { fileStreamOpen = value; RaisePropertyChanged(); } }
         public Action<bool> SetAutoscroll { get; set; }
         public int SVMBaudRate { get { return baudRate; } set { baudRate = value; refreshVariables(); RaisePropertyChanged(); } }
         public string SVMPortName { get { return portName; } set { portName = value; refreshVariables(); RaisePropertyChanged(); } }
@@ -62,9 +67,14 @@ namespace MultitabSerialCommunicator
         public ICommand ClearText { get; set; }
         #endregion
 
+        public bool StreamHasPath;
+        public string StreamPath;
+        public FILESTREAM WriteStream;
+
         #region Constructor
 
-        public SerialViewModel() {
+        public SerialViewModel()
+        {
             MessageCount = 200;
 
             serialDev.OnMessage = message;
@@ -98,47 +108,100 @@ namespace MultitabSerialCommunicator
         private void refreshVariables()
         {
             this.serialDev.SetPortValues(
-                SVMBaudRate.ToString(), 
-                SVMDataBits, 
-                SVMStopbits, 
-                SVMParity, 
-                SVMHandShake, 
-                SVMPortName, 
+                SVMBaudRate.ToString(),
+                SVMDataBits,
+                SVMStopbits,
+                SVMParity,
+                SVMHandShake,
+                SVMPortName,
                 BufferSize);
         }
 
-        private void message(string data, string rxortx) {
+        /// <summary>
+        /// Returns true if it's closed but is now open. Returns false if it's already open and is now closed.
+        /// </summary>
+        /// <returns>a bool.</returns>
+        public bool AutoconnectStream()
+        {
+            if (WritingStreamOpen)
+            {
+                CloseStream();
+                return false;
+            }
+            else
+            {
+                OpenStream();
+                return true;
+            }
+        }
+        public void OpenStream()
+        {
+            if (!StreamHasPath)
+            {
+                SaveFileDialog sfd = new SaveFileDialog();
+                sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                sfd.Title = "Where to save the stream to";
+                if(sfd.ShowDialog() == DialogResult.OK)
+                {
+                    StreamPath = sfd.FileName;
+                    StreamHasPath = true;
+                }
+            }
+
+            //WriteStream = new FileStream(StreamPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            WriteStream = new FILESTREAM();
+            WriteStream.FullPath = StreamPath;
+            WriteStream.Open();
+        }
+        public void CloseStream()
+        {
+            WriteStream.FullOnClose();
+        }
+        public void WriteToStream(string data)
+        {
+            WriteStream.Write(data);
+        }
+
+        private void message(string data, string rxortx)
+        {
             AddNewMessage(data, rxortx);
         }
 
-        private void clrMessageBuffer() {
+        private void clrMessageBuffer()
+        {
             MainText = "";
             CurrentMessageCount = 0;
         }
-        private void clrBuffers() {
+        private void clrBuffers()
+        {
             serialDev.ClearBuffers();
         }
 
-        private void connect() {
+        private void connect()
+        {
             string status = serialDev.AutoConnect();
             ButtonText = status;
-            if (status == "Disconnect") {
+            if (status == "Disconnect")
+            {
                 startupMessage(serialDev.EPortname, serialDev.EBaudrate, serialDev.EDatabits);
             }
         }
 
-        private void sendMessage() {
+        private void sendMessage()
+        {
             serialDev.SendSerialMessage(SendText);
         }
 
-        private void refreshList() {
+        private void refreshList()
+        {
             Ports.Clear();
             //Ports = new ObservableCollection<string>(SerialPort.GetPortNames());
             foreach (string v in SerialPort.GetPortNames())
                 Ports.Add(v);
         }
 
-        public void AddNewMessage(string data, string RXorTX) {
+        public void AddNewMessage(string data, string RXorTX)
+        {
             //clear message buffer (aka the text) if there's too much text cus it will lag
             if (MainText != null && MainText.Length > MessageCount * /*number of characters*/ 50)
                 clrMessageBuffer();
@@ -155,7 +218,8 @@ namespace MultitabSerialCommunicator
         /// if needed, adds custom messages to message buuufferrr
         /// </summary>
         /// <param name="message"></param>
-        public void AddMessage(string message) {
+        public void AddMessage(string message)
+        {
             //clear message buffer (aka the text) if there's too much text cus it will lag
             if (MainText != null && MainText.Length > MessageCount * /*number of characters*/ 50)
                 clrMessageBuffer();
@@ -166,18 +230,20 @@ namespace MultitabSerialCommunicator
 
             MainText += $"{message}" + '\n';
             CurrentMessageCount++;
+            if (WritingStreamOpen)
+                WriteToStream(message);
         }
 
-        private void startupMessage(string portname, string baudrate, string databits) {
-            MainText +=
-                $"Port:     {portname}{Environment.NewLine}" +
-                $"Baudrate: {baudrate}{Environment.NewLine}" +
-                $"DataBits: {databits}{Environment.NewLine}";
+        private void startupMessage(string portname, string baudrate, string databits)
+        {
+            AddMessage($"Port:     {portname}{Environment.NewLine}");
+            AddMessage($"Baudrate: {baudrate}{Environment.NewLine}");
+            AddMessage($"DataBits: {databits}{Environment.NewLine}");
         }
 
-        public void DisposeProcedure() {
+        public void DisposeProcedure()
+        {
             serialDev.DisposeProc();
-            serialDev = null;
         }
 
         #endregion

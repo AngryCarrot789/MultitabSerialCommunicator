@@ -6,61 +6,69 @@
              xmlns:local="clr-namespace:MultitabSerialCommunicator.Views"
              xmlns:multitabserialcommunicator="clr-namespace:MultitabSerialCommunicator"
              x:Class="MultitabSerialCommunicator.Views.SerialView"
-             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="675">
+             mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720" Background="{DynamicResource ControlDefaultBackground}">
     <Grid>
-        <DockPanel>
-            <Grid Width="282">
-                <GroupBox Header="Variables" Height="192" VerticalAlignment="Top" BorderBrush="{x:Null}" Background="{x:Null}">
-                    <Grid>
-                        <Label Content="Baud:"      HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        <Label Content="DataBits:"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,31,0,0"/>
-                        <Label Content="StopBits:"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,62,0,0"/>
-                        <Label Content="Parity:"    HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,93,0,0"/>
-                        <Label Content="Handshake:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,124,0,0"/>
-
-                        <ComboBox SelectedItem="{Binding SVMBaudRate, UpdateSourceTrigger=PropertyChanged}"  ItemsSource="{Binding SerialDataCollections.BaudRates}"  HorizontalAlignment="Right"    Width="190" VerticalAlignment="Top" Height="26"/>
-                        <ComboBox SelectedItem="{Binding SVMDataBits, UpdateSourceTrigger=PropertyChanged}"  ItemsSource="{Binding SerialDataCollections.Databits}"   HorizontalAlignment="Right"   Margin="0,31,0,0"  VerticalAlignment="Top" Width="190" Height="26"/>
-                        <ComboBox SelectedItem="{Binding SVMStopbits, UpdateSourceTrigger=PropertyChanged}"  ItemsSource="{Binding SerialDataCollections.Stopbits}"   HorizontalAlignment="Right"   Margin="0,62,0,0"  VerticalAlignment="Top" Width="190" Height="26"/>
-                        <ComboBox SelectedItem="{Binding SVMParity, UpdateSourceTrigger=PropertyChanged}"    ItemsSource="{Binding SerialDataCollections.Parities}"   HorizontalAlignment="Right"   Margin="0,93,0,0"  VerticalAlignment="Top" Width="190" Height="26"/>
-                        <ComboBox SelectedItem="{Binding SVMHandShake, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding SerialDataCollections.Handshakes}" HorizontalAlignment="Right"   Margin="0,124,0,0" VerticalAlignment="Top" Width="190" Height="26"/>
-                    </Grid>
-                </GroupBox>
-                <GroupBox Header="Ports and Connectivity" Margin="0,192,0,0" BorderBrush="{x:Null}" Background="{x:Null}">
-                    <Grid>
-                        <Label Content="COM Ports Avaliable" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        <ListBox SelectedItem="{Binding SVMPortName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Ports, UpdateSourceTrigger=PropertyChanged}" x:Name="ports" Margin="0,26,0,185"/>
-                        <Button Focusable="False" Command="{Binding ConnectToPort}" Content="{Binding ButtonText, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Height="40" BorderBrush="#FF323232" Background="#FF2E2E2E"/>
-                        <Button Focusable="False" Command="{Binding RefreshCOMsList}" Content="Refresh List" Margin="0,0,131,45" VerticalAlignment="Bottom" BorderBrush="#FF323232" Height="34" Background="#FF2E2E2E"/>
-                        <Slider Minimum="10" Maximum="10000" Value="{Binding ReadTimeout, UpdateSourceTrigger=PropertyChanged}" Margin="86,0,0,161" VerticalAlignment="Bottom" Foreground="#FF323232" Height="22"/>
-                        <Label Content="Read Timeout" HorizontalAlignment="Left" Margin="0,0,0,159" VerticalAlignment="Bottom"/>
-                        <Label Content="Write Timeout" HorizontalAlignment="Left" Margin="0,0,0,133" VerticalAlignment="Bottom"/>
-                        <Slider Minimum="10" Maximum="10000" Value="{Binding WriteTimeout, UpdateSourceTrigger=PropertyChanged}" Margin="86,0,0,135" VerticalAlignment="Bottom" Foreground="#FF323232" Height="22"/>
-                        <Label Content="Buffer Size:" HorizontalAlignment="Left" Margin="0,0,0,107" VerticalAlignment="Bottom"/>
-                        <Slider Minimum="10" Maximum="10000" Value="{Binding BufferSize, UpdateSourceTrigger=PropertyChanged}" Margin="86,0,0,109" VerticalAlignment="Bottom" Foreground="#FF323232" Height="22"/>
-                        <Button Focusable="False" Command="{Binding ClearBuffers}" Content="Clear Buffers" Margin="0,0,0,45" VerticalAlignment="Bottom" BorderBrush="#FF323232" Height="34" HorizontalAlignment="Right" Width="125" Background="#FF2E2E2E"/>
-                        <CheckBox IsChecked="{Binding DTREnable, UpdateSourceTrigger=PropertyChanged}" Content="Data Terminal Ready (DTR)" HorizontalAlignment="Left" Margin="0,0,0,84" VerticalAlignment="Bottom" BorderBrush="#FF383838"/>
-                        <CheckBox IsChecked="{Binding AutoScroll, UpdateSourceTrigger=PropertyChanged}" Content="Autoscroll" HorizontalAlignment="Left" Margin="169,0,0,84" VerticalAlignment="Bottom" BorderBrush="#FF383838"/>
-                    </Grid>
-                </GroupBox>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20*" MaxWidth="300"/>
+            <ColumnDefinition Width="50*"/>
+        </Grid.ColumnDefinitions>
+        <GroupBox Header="Messages" Margin="13,0,0,0" FontSize="16" Grid.Column="1">
+            <Grid Margin="5">
+                <TextBox Text="{Binding SendText, UpdateSourceTrigger=PropertyChanged}" Padding="3" x:Name="messageText" Height="32" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="95,0,0,0" FontSize="16">
+                    <TextBox.InputBindings>
+                        <KeyBinding  Key="Enter" Command="{Binding SendSerialMessage}" />
+                    </TextBox.InputBindings>
+                </TextBox>
+                <Button Command="{Binding SendSerialMessage}" Content="Send" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="90" Height="32" FontSize="16" Focusable="False"/>
+                <TextBox Text="{Binding MainText, UpdateSourceTrigger=PropertyChanged}" TextChanged="TextBox_TextChanged" IsReadOnly="True" Margin="0,31,0,37" TextWrapping="Wrap" FontSize="16">
+                    <TextBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Clear Text" Command="{Binding ClearText}"/>
+                        </ContextMenu>
+                    </TextBox.ContextMenu>
+                </TextBox>
+                <Label Content="Transceived Messages" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16"/>
             </Grid>
-            <GroupBox Header="Messages" Margin="2 0 0 0" BorderBrush="{x:Null}" Background="{x:Null}">
-                <Grid>
-                    <TextBox Text="{Binding SendText, UpdateSourceTrigger=PropertyChanged}" x:Name="messageText" Height="32" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="95,0,0,0" BorderBrush="#FF383838" FontSize="14">
-                        <TextBox.InputBindings>
-                            <KeyBinding  Key="Enter" Command="{Binding SendSerialMessage}" />
-                        </TextBox.InputBindings>
-                    </TextBox>
-                    <Button Focusable="False" Command="{Binding SendSerialMessage}" Content="send" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="90" BorderBrush="#FF323232" Height="32" Background="#FF2E2E2E"/>
-                    <TextBox Text="{Binding MainText, UpdateSourceTrigger=PropertyChanged}" TextChanged="TextBox_TextChanged" IsReadOnly="True" Margin="0,26,0,37" TextWrapping="Wrap" FontSize="14">
-                        <TextBox.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Clear Text" Command="{Binding ClearText}"/>
-                            </ContextMenu>
-                        </TextBox.ContextMenu>
-                    </TextBox>
-                    <Label Content="Transceived Messages" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        </GroupBox>
+        <Grid>
+            <GroupBox Header="Variables" Height="232" VerticalAlignment="Top" FontSize="16">
+                <Grid Margin="5">
+                    <Label Content="Baud:"      HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="16" Height="32"/>
+                    <Label Content="DataBits:"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,37,0,0" FontSize="16" Height="32"/>
+                    <Label Content="StopBits:"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,74,0,0" FontSize="16" Height="32"/>
+                    <Label Content="Parity:"    HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,111,0,0" FontSize="16" Height="32"/>
+                    <Label Content="Handshake:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,149,0,0" FontSize="16"/>
+
+                    <ComboBox SelectedItem="{Binding SVMBaudRate, UpdateSourceTrigger=PropertyChanged}"  ItemsSource="{Binding SerialDataCollections.BaudRates}" VerticalAlignment="Top" Height="32" Margin="92,0,0,0" FontSize="16"/>
+                    <ComboBox SelectedItem="{Binding SVMDataBits, UpdateSourceTrigger=PropertyChanged}"  ItemsSource="{Binding SerialDataCollections.Databits}"   Margin="92,37,0,0"  VerticalAlignment="Top" Height="32" FontSize="16"/>
+                    <ComboBox SelectedItem="{Binding SVMStopbits, UpdateSourceTrigger=PropertyChanged}"  ItemsSource="{Binding SerialDataCollections.Stopbits}"   Margin="92,74,0,0"  VerticalAlignment="Top" Height="32" FontSize="16"/>
+                    <ComboBox SelectedItem="{Binding SVMParity, UpdateSourceTrigger=PropertyChanged}"    ItemsSource="{Binding SerialDataCollections.Parities}"   Margin="92,111,0,0"  VerticalAlignment="Top" Height="32" FontSize="16"/>
+                    <ComboBox SelectedItem="{Binding SVMHandShake, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding SerialDataCollections.Handshakes}"   Margin="92,148,0,0" VerticalAlignment="Top" Height="32" FontSize="16"/>
                 </Grid>
             </GroupBox>
-        </DockPanel>
+            <GroupBox Header="Ports and Connectivity" Margin="0,237,0,0" FontSize="16">
+                <Grid Margin="5">
+                    <Label Content="COM Ports Avaliable" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="16"/>
+                    <ListBox SelectedItem="{Binding SVMPortName, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Ports, UpdateSourceTrigger=PropertyChanged}" x:Name="ports" Margin="0,31,0,207" FontSize="16"/>
+                    <Button Command="{Binding ConnectToPort}" Content="{Binding ButtonText, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Height="50" FontSize="16" Focusable="False"/>
+                    <Slider Minimum="10" Maximum="10000" Value="{Binding ReadTimeout, UpdateSourceTrigger=PropertyChanged}" Margin="106,0,0,181" VerticalAlignment="Bottom" Height="21" Foreground="#FF2C2C2C" AutoToolTipPlacement="TopLeft"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="0,0,0,181" VerticalAlignment="Bottom" FontSize="16" Text="Read Timeout"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="0,0,0,155" VerticalAlignment="Bottom" FontSize="16"><Run Text="Write"/><Run Text=" Timeout"/></TextBlock>
+                    <Slider Minimum="10" Maximum="10000" Value="{Binding WriteTimeout, UpdateSourceTrigger=PropertyChanged}" Margin="106,0,0,155" VerticalAlignment="Bottom" Height="21" Foreground="#FF2C2C2C" AutoToolTipPlacement="TopLeft"/>
+                    <TextBlock Text="Buffer Size:" HorizontalAlignment="Left" Margin="0,0,0,129" VerticalAlignment="Bottom" FontSize="16"/>
+                    <Slider Minimum="10" Maximum="10000" Value="{Binding BufferSize, UpdateSourceTrigger=PropertyChanged}" Margin="106,0,0,129" VerticalAlignment="Bottom" Height="21" Foreground="#FF2C2C2C" AutoToolTipPlacement="TopLeft"/>
+                    <Grid Height="69" VerticalAlignment="Bottom" Margin="0,0,0,55">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*"/>
+                            <ColumnDefinition Width="4*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Command="{Binding RefreshCOMsList}" Content="Refresh COMs" FontSize="16" Margin="0,29,2,0" Focusable="False"/>
+                        <Button Command="{Binding ClearBuffers}"   Content="Clr Buffers" FontSize="16" Grid.Column="1" Margin="2,29,0,0" Focusable="False"/>
+                        <CheckBox IsChecked="{Binding DTREnable, UpdateSourceTrigger=PropertyChanged}" Content="DataTermReady" Margin="0,0,2,0" VerticalAlignment="Top" FontSize="16"/>
+                        <CheckBox IsChecked="{Binding AutoScroll, UpdateSourceTrigger=PropertyChanged}" Content="Autoscroll" Margin="2,0,0,0" VerticalAlignment="Top" FontSize="16" Height="29" Grid.Column="1"/>
+                    </Grid>
+                </Grid>
+            </GroupBox>
+        </Grid>
     </Grid>
 </UserControl>

@@ -141,10 +141,8 @@ namespace MultitabSerialCommunicator
 
         public void DisposeProc()
         {
-            Task.Run(() => {
-                serialPort.Dispose();
-                serialSender.DisposeProc();
-            });
+            serialPort.Dispose();
+            serialSender.DisposeProc();
         }
     }
 }

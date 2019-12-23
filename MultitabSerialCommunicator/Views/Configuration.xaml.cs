@@ -34,5 +34,11 @@ namespace MultitabSerialCommunicator.Views
             e.Cancel = true;
             this.Hide();
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+                this.Hide();
+        }
     }
 }
